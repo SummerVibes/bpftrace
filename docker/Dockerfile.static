@@ -56,3 +56,14 @@ RUN sed -i 's/libzstd_shared/libzstd_static/g' /usr/lib/llvm18/lib/cmake/llvm/LL
 # it's a symlink for /usr/lib/cmake/clangXX/ which is only created when the
 # latest clang is installed. To fix this, create the symlink manually.
 RUN ln -s 'clang18' /usr/lib/cmake/clang
+
+
+# Build libpcap from source with -fPIC
+RUN wget https://www.tcpdump.org/release/libpcap-1.10.4.tar.gz && \
+    tar xvf libpcap-1.10.4.tar.gz && \
+    cd libpcap-1.10.4 && \
+    ./configure --prefix=/usr --enable-shared=no CFLAGS="-fPIC" && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && \
+    rm -rf libpcap-1.10.4 libpcap-1.10.4.tar.gz
